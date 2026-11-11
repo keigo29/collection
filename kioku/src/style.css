@@ -216,6 +216,13 @@ a {
   place-items: center;
   margin-bottom: 14px;
 }
+/* 左上のロゴはアイコンのファイル（public/icon.svg）をそのまま使う */
+.logo-mark {
+  display: block;
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+}
 .logo .icon {
   width: 20px;
   height: 20px;

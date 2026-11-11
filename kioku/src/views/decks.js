@@ -96,6 +96,17 @@ async function removeDeck(d) {
   nav.go('/decks');
 }
 
+// スマホで「1回目のタップ」を受けたデッキ
+let armed = null;
+let keepArm = false;
+const isTouch = () => matchMedia('(pointer: coarse)').matches;
+
+export function leave() {
+  if (!keepArm) armed = null;
+  keepArm = false;
+  return true;
+}
+
 const cnt = (v, cls) => `<span class="cnt ${cls} ${v ? '' : 'zero'}"><span class="dot"></span>${v}</span>`;
 
 export function render(main, { name, arg }) {
@@ -120,14 +131,23 @@ export function render(main, { name, arg }) {
   const walk = (nodes, depth) => {
     for (const n of nodes) {
       const d = n.deck;
-      const row = el(`<div class="deck-row ${col.conf.curDeck === d.id ? 'cur' : ''}">
+      const row = el(`<div class="deck-row ${col.conf.curDeck === d.id || armed === d.id ? 'cur' : ''}">
         <div class="deck-name" style="padding-left:${depth * 18}px">
           ${n.kids.length ? `<button class="tw ${d.collapsed ? 'closed' : ''}" data-tw title="開く・閉じる">${icon('chevron-down')}</button>` : '<span style="width:22px;flex:none"></span>'}
-          <button class="open" title="開く">${d.filtered ? `<span class="sub">${icon('funnel')}</span> ` : ''}${esc(d.name.split('::').pop())}</button>
+          <button class="open" title="開く">${d.filtered ? `<span class="sub">${icon('funnel')}</span> ` : ''}${esc(d.name.split('::').pop())}${armed === d.id ? '<span class="sub small" style="font-weight:500;margin-left:8px">もう一度で開く</span>' : ''}</button>
         </div>
         ${cnt(n.new, 'cnt-new')}${cnt(n.lrn, 'cnt-lrn')}${cnt(n.rev, 'cnt-rev')}
         <button class="icon-btn" data-m title="ほかの操作">${icon('ellipsis')}</button></div>`);
       row.querySelector('.open').onclick = () => {
+        // スマホでは、下にデッキがあるものは1回目で開閉、同じものをもう1回で詳しく
+        if (n.kids.length && isTouch() && armed !== d.id) {
+          armed = d.id;
+          keepArm = true;
+          col.put('decks', { ...d, collapsed: !d.collapsed });
+          nav.rerender();
+          return;
+        }
+        armed = null;
         col.setConf({ curDeck: d.id });
         nav.go(`/deck/${d.id}`);
       };
