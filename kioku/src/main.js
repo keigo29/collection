@@ -43,7 +43,7 @@ let ignoreHash = false;
 function shell() {
   const app = el(`<div class="app">
     <nav class="rail" aria-label="アプリ">
-      <div class="logo" title="KIOKU">${icon('grid-2x2')}</div>
+      <img class="logo logo-mark" src="./icon.svg" alt="KIOKU" title="KIOKU">
       <button class="rail-btn rail-menu" data-act="side"><span class="box">${icon('menu')}</span><span class="name">メニュー</span></button>
       ${RAIL.map(([k, ic, name, key]) => `<a class="rail-btn" href="#/${k}" data-r="${k}" title="${name}${key ? `（${key}）` : ''}"><span class="box">${icon(ic)}${k === 'decks' ? '<span class="badge hidden" id="dueBadge"></span>' : ''}</span><span class="name">${name}</span></a>`).join('')}
       <div class="grow"></div>
