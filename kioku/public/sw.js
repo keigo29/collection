@@ -1,5 +1,5 @@
 // 通信がなくても開けるようにする（開いたものを端末に残す）
-const CACHE = 'kioku-v2';
+const CACHE = 'kioku-v3';
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(['./', './index.html', './manifest.webmanifest', './icon.svg'])).then(() => self.skipWaiting()));
